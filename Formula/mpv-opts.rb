@@ -26,6 +26,11 @@ class MpvOpts < Formula
 	depends_on "mujs"
 	depends_on "vapoursynth"
 	depends_on "youtube-dl"
+
+  depends_on "libarchive" => :optional
+  depends_on "libbluray" => :optional
+  depends_on "libdvdnav" => :optional
+  depends_on "libdvdread" => :optional
   
 	def install
 	  # LANG is unset by default on macOS and causes issues when calling getlocale
@@ -46,7 +51,6 @@ class MpvOpts < Formula
 		--enable-zsh-comp
 		--zshdir=#{zsh_completion}
 	  ]
-
 	  args << "--enable-libarchive" if build.with? "libarchive"
 	  args << "--enable-libbluray" if build.with? "libbluray"
 	  args << "--enable-dvdnav" if build.with? "libdvdnav"
