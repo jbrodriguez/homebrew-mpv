@@ -1,16 +1,14 @@
-class MpvOpts < Formula
+class Mpv < Formula
 	desc "Media player based on MPlayer and mplayer2"
 	homepage "https://mpv.io"
-	url "https://github.com/mpv-player/mpv/archive/v0.29.1.tar.gz"
-	sha256 "f9f9d461d1990f9728660b4ccb0e8cb5dce29ccaa6af567bec481b79291ca623"
-	revision 3
+	url "https://github.com/mpv-player/mpv/archive/v0.30.0.tar.gz"
+	sha256 "33a1bcb7e74ff17f070e754c15c52228cf44f2cefbfd8f34886ae81df214ca35"
 	head "https://github.com/mpv-player/mpv.git"
   
 	bottle do
-	  rebuild 1
-	  sha256 "a7e67ef6a0e0b71320164167e14c9a1ce0d237a9ff822012372c2315ea08b159" => :mojave
-	  sha256 "11cc6bad21c68054d6ea85fc0b91ba5e4f945107b93855c3a54933ceb81651ff" => :high_sierra
-	  sha256 "30eacc0d71f4f3ee3be680aadc0a1426f3f8f8dd166e3198e3b475ae26bb0f22" => :sierra
+	  sha256 "a6126ab264bbe4f59cc8f27fbaba953a6654943f50c7869a42c74646baa44084" => :catalina
+	  sha256 "876809a4bbe6af6f5dce055a7c7246b0b48db9237b6a7ba0151ef3b17eb2e1d8" => :mojave
+	  sha256 "fc82056229104bf1898040d8cfd01eafa3a86afa18cdb0a1776afb63f0d72e7d" => :high_sierra
 	end
   
 	depends_on "docutils" => :build
@@ -19,18 +17,19 @@ class MpvOpts < Formula
   
 	depends_on "ffmpeg"
 	depends_on "jpeg"
+	depends_on "libarchive"
 	depends_on "libass"
 	depends_on "little-cms2"
 	depends_on "lua@5.1"
-  
+	depends_on "libarchive"
+	depends_on "libbluray"
+	depends_on "libdvdnav"
+	depends_on "libdvdread"
+
 	depends_on "mujs"
+	depends_on "uchardet"
 	depends_on "vapoursynth"
 	depends_on "youtube-dl"
-
-  depends_on "libarchive" => :optional
-  depends_on "libbluray" => :optional
-  depends_on "libdvdnav" => :optional
-  depends_on "libdvdread" => :optional
   
 	def install
 	  # LANG is unset by default on macOS and causes issues when calling getlocale
@@ -44,22 +43,22 @@ class MpvOpts < Formula
 		--enable-javascript
 		--enable-libmpv-shared
 		--enable-lua
+		--enable-libarchive
+		--enable-libbluray
+		--enable-libdvdnav
+		--enable-libdvdread
+		--enable-uchardet
 		--confdir=#{etc}/mpv
 		--datadir=#{pkgshare}
 		--mandir=#{man}
 		--docdir=#{doc}
-		--enable-zsh-comp
 		--zshdir=#{zsh_completion}
 	  ]
-	  args << "--enable-libarchive" if build.with? "libarchive"
-	  args << "--enable-libbluray" if build.with? "libbluray"
-	  args << "--enable-dvdnav" if build.with? "libdvdnav"
-	  args << "--enable-dvdread" if build.with? "libdvdread"
   
 	  system "./bootstrap.py"
 	  system "python3", "waf", "configure", *args
 	  system "python3", "waf", "install"
-  
+
 	  system "python3", "TOOLS/osxbundle.py", "build/mpv"
 	  prefix.install "build/mpv.app"
 	end
